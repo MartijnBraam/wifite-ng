@@ -14,5 +14,9 @@ class Interface:
         device = input_tuple[3]
         return Interface(interface, chipset, driver, device)
 
+    @property
+    def is_monitor(self):
+        return self.interface.startswith("mon")
+
     def __repr__(self):
         return "<Interface {} driver={} chipset={} device={}>".format(self.interface, self.driver, self.chipset, self.device)
