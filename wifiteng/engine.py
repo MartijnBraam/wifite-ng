@@ -1,3 +1,4 @@
+from wifiteng.aircrack import *
 
 
 class Engine:
@@ -6,6 +7,8 @@ class Engine:
         self.ui = userinterface
 
     def run(self):
+        airmon = Airmon()
+        airmon.list()
         self.ui.menu("Main menu", [
             "Scan networks",
             "List cracked networks",

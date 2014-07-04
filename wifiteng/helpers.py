@@ -23,7 +23,7 @@ class ShellTool(object):
             (stdout, stderr) = proc.communicate(timeout=timeout)
 
             # Return all information
-            return proc.returncode, stdout, stderr
+            return proc.returncode, stdout.decode(), stderr.decode()
         except subprocess.TimeoutExpired:
             # Cleanup after timeout expires and then bubble the exception up
             proc.kill()
