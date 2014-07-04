@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+import sys
+import os
+
+base_dir = os.path.dirname(__file__) or '.'
+module_dir = os.path.join(base_dir, '..')
+sys.path.insert(0, module_dir)
+
+from wifiteng.userinterface import *
+
+user_interface = TerminalUserInterface()
+
+user_interface.bootsplash()
