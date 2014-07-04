@@ -2,6 +2,7 @@ import abc
 import tty
 import sys
 import termios
+import datetime
 from wifiteng.helpers import Color
 
 
@@ -53,22 +54,26 @@ class TerminalUserInterface(BaseUserInterface):
         print(Color.WHITE)
 
     def info(self, message):
-        pass
+        now = datetime.datetime.now().strftime("%H:%M:%S")
+        print("[{}] {}".format(now, message))
 
     def error(self, message):
-        pass
+        now = datetime.datetime.now().strftime("%H:%M:%S")
+        print("[{}] {}{}{}".format(now, Color.RED, message, Color.WHITE))
 
     def success(self, message):
-        pass
+        now = datetime.datetime.now().strftime("%H:%M:%S")
+        print("[{}] {}{}{}".format(now, Color.GREEN, message, Color.WHITE))
 
     def warning(self, message):
-        pass
+        now = datetime.datetime.now().strftime("%H:%M:%S")
+        print("[{}] {}{}{}".format(now, Color.YELLOW, message, Color.WHITE))
 
     def menu(self, title, choises):
-        print(Color.WHITE + " --------[ " + Color.GREEN + title + Color.WHITE + " ]--------")
+        print(Color.WHITE + "           --------[ " + Color.GREEN + title + Color.WHITE + " ]--------")
         for index, choise in enumerate(choises):
-            print(" {}. {}".format(index + 1, choise))
-        print(" --------{}--------".format("-" * (len(title) + 4)))
+            print("           {}. {}".format(index + 1, choise))
+        print("           --------{}--------".format("-" * (len(title) + 4)))
         stdin = sys.stdin.fileno()
         old_setting = termios.tcgetattr(stdin)
         try:
@@ -80,6 +85,8 @@ class TerminalUserInterface(BaseUserInterface):
             termios.tcsetattr(stdin, termios.TCSADRAIN, old_setting)
 
         if not int(keypress) in range(1, len(choises)):
+            self.warning("Invalid key pressed.")
             return self.menu(title, choises)
         else:
+            self.info(choises[int(keypress[0:1])])
             return choises[int(keypress[0:1])]
