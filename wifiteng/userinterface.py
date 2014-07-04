@@ -1,4 +1,7 @@
 import abc
+import tty
+import sys
+import termios
 from wifiteng.helpers import Color
 
 
@@ -26,7 +29,7 @@ class BaseUserInterface(object):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def menu(self, choises):
+    def menu(self, title, choises):
         raise NotImplementedError()
 
 
@@ -61,5 +64,22 @@ class TerminalUserInterface(BaseUserInterface):
     def warning(self, message):
         pass
 
-    def menu(self, choises):
-        pass
+    def menu(self, title, choises):
+        print(Color.WHITE + " --------[ " + Color.GREEN + title + Color.WHITE + " ]--------")
+        for index, choise in enumerate(choises):
+            print(" {}. {}".format(index + 1, choise))
+        print(" --------{}--------".format("-" * (len(title) + 4)))
+        stdin = sys.stdin.fileno()
+        old_setting = termios.tcgetattr(stdin)
+        try:
+            tty.setraw(stdin)
+            keypress = sys.stdin.read(1)
+        except IOError:
+            keypress = input()
+        finally:
+            termios.tcsetattr(stdin, termios.TCSADRAIN, old_setting)
+
+        if not int(keypress) in range(1, len(choises)):
+            return self.menu(title, choises)
+        else:
+            return choises[int(keypress[0:1])]

@@ -8,7 +8,10 @@ module_dir = os.path.join(base_dir, '..')
 sys.path.insert(0, module_dir)
 
 from wifiteng.userinterface import *
+from wifiteng.engine import Engine
 
 user_interface = TerminalUserInterface()
-
 user_interface.bootsplash()
+
+engine = Engine(user_interface)
+engine.run()
