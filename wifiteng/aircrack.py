@@ -38,3 +38,52 @@ class Airmon(ShellTool):
         for interface in interfaces:
             returnvalue.append(Interface.from_tuple(interface))
         return returnvalue
+
+
+class Airodump(ShellTool):
+
+    regex_ap = re.compile(r"""^(?P<bssid>(?:[0-9A-F]{2}[:-]){5}(?:[0-9A-F]{2})) # Match a mac address
+                                    \s*,\s*
+                                    (?P<firstseen>\d{4}-\d{2}-\d{2}\ \d{2}:\d{2}:\d{2}) # Match a airdump-ng datetime
+                                    \s*,\s*
+                                    (?P<lastseen>\d{4}-\d{2}-\d{2}\ \d{2}:\d{2}:\d{2}) # Match a airdump-ng datetime
+                                    \s*,\s*
+                                    (?P<channel>\d{1,2})
+                                    ,\s*
+                                    (?P<speed>\d{1,3})
+                                    ,\s*
+                                    (?P<privacy>[0-9A-Z]+)
+                                    \s*,\s*
+                                    (?P<cipher>[A-Z]+)
+                                    \s*,\s*
+                                    (?P<authentication>[A-Z]*)
+                                    ,\s*
+                                    (?P<power>-?\d+)
+                                    ,\s*
+                                    (?P<beacons>\d+)
+                                    ,\s*
+                                    (?P<iv>\d+)
+                                    ,\s*
+                                    (?P<ip>\d{1,3}\.[\s\d]+\.[\s\d]+\.[\s\d]+) # Match a padded IPv4 address
+                                    ,\s*
+                                    (?:\d+)
+                                    ,\s*
+                                    (?P<essid>[\w-]+)
+                                    ,\s*
+                                    (?P<key>[\w-]*)$ # Match the key, if it exists""", re.MULTILINE | re.VERBOSE)
+
+    regex_client = re.compile(r"""^(?P<mac>(?:[0-9A-F]{2}[:-]){5}(?:[0-9A-F]{2})) # Match a mac address
+                                    \s*,\s*
+                                    (?P<firstseen>\d{4}-\d{2}-\d{2}\ \d{2}:\d{2}:\d{2}) # Match a airdump-ng datetime
+                                    \s*,\s*
+                                    (?P<lastseen>\d{4}-\d{2}-\d{2}\ \d{2}:\d{2}:\d{2}) # Match a airdump-ng datetime
+                                    \s*,\s*
+                                    (?P<power>-?\d+)
+                                    ,\s*
+                                    (?P<packets>\d+)
+                                    ,\s*
+                                    (?P<bssid>(?:[0-9A-F]{2}[:-]){5}(?:[0-9A-F]{2})) # Match a mac address
+                                    ,\s*
+                                    (?P<key>[\w-]*)$ # Match the probes, if they exist""", re.MULTILINE | re.VERBOSE)
+
+    pass
