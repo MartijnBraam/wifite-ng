@@ -8,7 +8,17 @@ class Engine:
 
     def run(self):
         airmon = Airmon()
-        airmon.list()
+        interfaces = airmon.list()
+
+        # Check if any interface is in monitor mode
+        if any(x.is_monitor for x in interfaces):
+            self.ui.warning("Interface in monitor mode found.")
+            no_reset = self.ui.ask("Do you want to use the current monitor configuration?")
+            if no_reset:
+                self.ui.info("Using current monitor configuration")
+            else:
+                self.ui.info("")
+
 
         self.ui.menu("Main menu", [
             "Scan networks",

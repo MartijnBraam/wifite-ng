@@ -1,0 +1,29 @@
+digraph G {
+    node [shape=box];
+
+    start [label="Start", style=dashed ];
+    monitor_check [label="Is any interface in monitor mode?", shape=diamond]
+    start -> monitor_check;
+
+    ask_reconfigure [label="Ask user if interfaces should be reconfigured", shape=diamond];
+    monitor_check -> ask_reconfigure [label="yes"];
+    ask_reconfigure -> show_main_menu [label="no"];
+
+    show_main_menu [label="Display the main menu", shape=box];
+
+    check_interface_count [label="Is there more than 1 non-monitor interface?", shape=diamond];
+
+    monitor_check -> check_interface_count [label="no"];
+    ask_reconfigure -> check_interface_count [label="yes"];
+
+    enable_interface_1 [label="Enable monitor mode for the interface", shape=parallelogram];
+    check_interface_count -> enable_interface_1 [label="no"];
+
+    display_interface_table [label="Display the table of interfaces to the user", shape=parallelogram];
+    check_interface_count -> display_interface_table [label="yes"];
+    enable_interface_1 -> show_main_menu;
+
+    enable_interface_2 [label="Set selected interfaces in monitor mode", shape=parallelogram];
+    display_interface_table -> enable_interface_2;
+    enable_interface_2 -> show_main_menu;
+}

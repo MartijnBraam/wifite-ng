@@ -91,6 +91,26 @@ class TerminalUserInterface(BaseUserInterface):
             self.info(choises[int(keypress[0:1])])
             return choises[int(keypress[0:1])]
 
+    def ask(self, question, options=("y", "n")):
+        display = question + " (" + ", ".join(options) + ")"
+        self.info(display)
+        stdin = sys.stdin.fileno()
+        old_setting = termios.tcgetattr(stdin)
+        try:
+            tty.setraw(stdin)
+            keypress = sys.stdin.read(1)
+        except IOError:
+            keypress = input()
+        finally:
+            termios.tcsetattr(stdin, termios.TCSADRAIN, old_setting)
+
+        if not keypress in options:
+            self.warning("Invalid key pressed.")
+            return self.ask(question, options)
+        else:
+            return keypress
+
+
     def table(self, columns, data):
         lengths = []
         temp_merge = data[:]
