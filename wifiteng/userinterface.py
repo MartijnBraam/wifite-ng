@@ -90,3 +90,26 @@ class TerminalUserInterface(BaseUserInterface):
         else:
             self.info(choises[int(keypress[0:1])])
             return choises[int(keypress[0:1])]
+
+    def table(self, columns, data):
+        lengths = []
+        temp_merge = data[:]
+        temp_merge.append(columns)
+        for row in temp_merge:
+            for index, field in enumerate(row):
+                if len(lengths) < index + 1:
+                    lengths.append(len(field))
+                else:
+                    if len(field) > lengths[index]:
+                        lengths[index] = len(field)
+
+        format_part = []
+        for length in lengths:
+            format_part.append(" {!s:<" + str(length) + "} ")
+        format_str = str("|".join(format_part))
+        format_str = (" " * 11) + format_str
+        total_width = sum(lengths) + len(lengths) * 3 - 1
+        print(format_str.format(*columns))
+        print(" " * 11 + "-" * total_width)
+        for row in data:
+            print(format_str.format(*row))

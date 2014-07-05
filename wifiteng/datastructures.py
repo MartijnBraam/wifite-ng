@@ -38,6 +38,12 @@ class Security:
         else:
             return "<Security {} {} {}>".format(self.privacy, self.cipher, self.authentication)
 
+    def __str__(self):
+        if self.privacy == "WEP":
+            return "WEP"
+        else:
+            return "{} {} {}".format(self.privacy, self.cipher, self.authentication)
+
 
 class Accesspoint:
 
