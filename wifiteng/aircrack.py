@@ -1,5 +1,8 @@
+import os
 from wifiteng.helpers import ShellTool
-from wifiteng.datastructures import Interface
+from wifiteng.datastructures import Interface, Accesspoint
+from subprocess import TimeoutExpired
+import tempfile
 import re
 
 
@@ -86,4 +89,34 @@ class Airodump(ShellTool):
                                     ,\s*
                                     (?P<key>[\w-]*)$ # Match the probes, if they exist""", re.MULTILINE | re.VERBOSE)
 
-    pass
+    def get_stations(self, interface, timeout=5):
+        output_dir = tempfile.mkdtemp(prefix="tmp-wifite-ng")
+        command = [
+            'airodump-ng',
+            '-a',
+            '-w', os.path.join(output_dir, 'airodump'),
+            '--output-format', 'csv',
+            interface
+        ]
+        try:
+            (returncode, stdout, stderr) = self.call_and_communicate(command, timeout=timeout)
+        except TimeoutExpired:
+            # This is supposed to happen for this call
+            pass
+
+        csv = os.path.join(output_dir, 'airodump-01.csv')
+        data = open(csv).read()
+
+        accesspoints_tuple = Airodump.regex_ap.findall(data)
+        clients_tuple = Airodump.regex_client.findall(data)
+
+        accesspoints = []
+        clients = []
+
+        for ap in accesspoints_tuple:
+            accesspoints.append(Accesspoint.from_tuple(ap))
+
+        for client in clients_tuple:
+            clients.append(client)
+
+        return accesspoints, clients
